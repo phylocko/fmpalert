@@ -1,0 +1,17 @@
+[Unit]
+Description=FlapMyPort Notification Service
+
+[Service]
+Type=simple
+User=root
+Group=wheel
+
+ExecStart=/path/to/your/python3 /path/to/fmpalert/fmpalert.py
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/bin/kill $MAINPID
+PIDFile=/var/run/fmpalert.pid
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
