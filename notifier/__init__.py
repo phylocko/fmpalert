@@ -36,14 +36,17 @@ class Notifier:
             sleep(self.check_interval)
 
     def _replace_template(self, info: dict):
-        cmd = self.exec_command.replace('$up_ports', str(info['up_ports']))
-        cmd = cmd.replace('$full_text', info['full_text'])
-        cmd = cmd.replace('$short_text', info['short_text'])
-        cmd = cmd.replace('$down_ports', str(info['down_ports']))
-        cmd = cmd.replace('$flap_count', str(info['flap_count']))
-        cmd = cmd.replace('$affected_devices', str(info['affected_devices']))
+        cmd_parts = []
+        for cmd_part in self.exec_command.split():
+            cmd_part = cmd_part.replace('$up_ports', str(info['up_ports']))
+            cmd_part = cmd_part.replace('$full_text', info['full_text'])
+            cmd_part = cmd_part.replace('$short_text', info['short_text'])
+            cmd_part = cmd_part.replace('$down_ports', str(info['down_ports']))
+            cmd_part = cmd_part.replace('$flap_count', str(info['flap_count']))
+            cmd_part = cmd_part.replace('$affected_devices', str(info['affected_devices']))
+            cmd_parts.append(cmd_part)
 
-        return cmd
+        return cmd_parts
 
     def prepare_info(self, review: Review):
         up_ports = len([x for x in review.events if x.ifOperStatus == 'up'])
@@ -85,4 +88,4 @@ class Notifier:
         if review:
             info = self.prepare_info(review)
             cmd = self._replace_template(info)
-            subprocess.run(cmd.split())
+            subprocess.run(cmd)
